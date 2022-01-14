@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React from 'react';
 import TextField from '@mui/material/TextField';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -11,7 +11,7 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button';
 
-export default function Form(props) {
+export default function Form() {
     const [value, setValue] = React.useState(new Date('2014-08-18T21:11:54'));
     const [age, setAge] = React.useState('');
 
