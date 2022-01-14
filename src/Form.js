@@ -12,7 +12,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button';
 
 export default function Form(props) {
-    const [dummy, setdummy] = useState('');
     const [value, setValue] = React.useState(new Date('2014-08-18T21:11:54'));
     const [age, setAge] = React.useState('');
 
