@@ -15,7 +15,7 @@ import Loader from './Loader'
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
-export default function Form() {
+export default function Form(props) {
     const [value, setValue] = React.useState(new Date('2022-01-14'));
     const [region, setregion] = React.useState('');
     const [btnDisable, setbtnDisable] = useState(false)
@@ -41,15 +41,17 @@ export default function Form() {
         if(response){
             setshowLoader(false)
             setsnackOpen(true)
+            props.displayTableProps(response.data)
         }
-        console.log(response.data)
+        //console.log(response.data)
       }
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        props.displayTableProps('')
         setshowLoader(true)
         setformErrMsg('')
-        setValue(new Date)
+        setValue(new Date())
         setdateErrMsg('')
         setregion('')
         formRef.current.reset();
@@ -134,7 +136,7 @@ export default function Form() {
             {showLoader ? <Loader /> : '' }
             <Snackbar open={snackOpen} autoHideDuration={6000} onClose={handleSnackClose}>
                 <Alert onClose={handleSnackClose} severity="success" sx={{ width: '100%' }}>
-                Data Submitted Successfully!
+                Data Fetched Successfully!
                 </Alert>
             </Snackbar>
             <h3>Sample Form</h3>
