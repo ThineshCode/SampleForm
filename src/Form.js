@@ -23,6 +23,11 @@ export default function Form() {
     const [showLoader, setshowLoader] = useState(false)
     const [formCheckbox, setformCheckbox] = useState(false)
     const [snackOpen, setsnackOpen] = useState(false)
+    const [emailErrMsg, setemailErrMsg] = useState('')
+    const [isMailErr, setisMailErr] = useState(false)
+    const [nameErrMsg, setnameErrMsg] = useState('')
+    const [isNameErr, setisNameErr] = useState(false)
+    const [formErrMsg, setformErrMsg] = useState('')
     const firstName = useRef('');
     const email = useRef('');
     const formRef = useRef('');
@@ -43,11 +48,18 @@ export default function Form() {
     const handleSubmit = (e) => {
         e.preventDefault();
         setshowLoader(true)
-        fetchRegion();
+        setformErrMsg('')
+        setValue(new Date)
         setdateErrMsg('')
         setregion('')
-        setformCheckbox(false)
         formRef.current.reset();
+        setformCheckbox(false)
+        if(ageCheck() >= 18){
+            fetchRegion();
+        }else{
+            setformErrMsg('User age must be minimum 18')
+            setshowLoader(false)
+        }
     }
     const handledateerror = () => {
         setbtnDisable(true)
@@ -74,6 +86,49 @@ export default function Form() {
           }
         setsnackOpen(false)
     }
+    const emailValidation = (e) => {
+        e.preventDefault();
+        if(validateEmail(e.target.value)){
+            setemailErrMsg('')
+            setisMailErr(false)
+            setbtnDisable(false)
+        }else {
+            setisMailErr(true)
+            setbtnDisable(true)
+            setemailErrMsg('Please Enter valid Email')
+        }
+    }
+    const validateEmail = (email) => {
+        var pattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        return email.match(pattern);
+    }
+    const nameValidation = (e) => {
+        e.preventDefault();
+        var regName = /^[a-zA-Z ]*$/;
+        if(!regName.test(e.target.value)){
+            setisNameErr(true)
+            setnameErrMsg('Enter Valid Name')
+            setbtnDisable(true)
+            return false;
+        }else{
+            setnameErrMsg('')
+            setisNameErr(false)
+            setbtnDisable(false)
+            return true;
+        }
+    }
+    const ageCheck = () => {
+        var dob = new Date(`${value}`);  
+        //calculate month difference from current date in time  
+        var month_diff = Date.now() - dob.getTime();  
+        //convert the calculated difference in date format  
+        var age_dt = new Date(month_diff);   
+        //extract year from date      
+        var year = age_dt.getUTCFullYear();  
+        //now calculate the age of the user  
+        var age = Math.abs(year - 1970);  
+        return age;
+    }
     return (
         <div className="container">
             {showLoader ? <Loader /> : '' }
@@ -84,8 +139,8 @@ export default function Form() {
             </Snackbar>
             <h3>Sample Form</h3>
             <form onSubmit={handleSubmit} ref={formRef}>
-                <FormControl fullWidth><TextField required inputRef={firstName} className="outline-space" id="standard-basic" label="Fullname" variant="outlined" /></FormControl>
-                <FormControl fullWidth><TextField required inputRef={email} className="outline-space" id="standard-basic" label="Email" variant="outlined" /></FormControl>
+                <FormControl fullWidth><TextField required autoComplete='off' inputRef={firstName} onChange={nameValidation} className="outline-space" id="standard-basic" label="Fullname" variant="outlined" error={isNameErr} helperText={nameErrMsg}/></FormControl>
+                <FormControl fullWidth><TextField required autoComplete='off' inputRef={email} onChange={emailValidation} className="outline-space" id="standard-basic" label="Email" variant="outlined" error={isMailErr} helperText={emailErrMsg}/></FormControl>
                 <FormControl fullWidth className="outline-space">
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DesktopDatePicker
@@ -119,6 +174,7 @@ export default function Form() {
                 <FormControl fullWidth className="outline-space">
                     <FormControlLabel control={<Checkbox checked={formCheckbox} onChange={handleCheck} required/>} label="I agree to Terms and Conditions" />
                 </FormControl>
+                <span className='err-msg float-left'>{formErrMsg}</span>
                 <Button variant="contained" type="submit" disabled={btnDisable} color="success">
                     Submit
                 </Button>
